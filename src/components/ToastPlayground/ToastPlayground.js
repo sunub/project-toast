@@ -1,63 +1,57 @@
-import React from 'react';
+import React from "react";
 
-import Button from '../Button';
-
-import styles from './ToastPlayground.module.css';
-
-const VARIANT_OPTIONS = ['notice', 'warning', 'success', 'error'];
+import styles from "./ToastPlayground.module.css";
+import Message from "../Message";
+import Variant from "../Variant";
+import PopToast from "../PopToast";
+import useToggle from "../hooks/use-toggle";
+import { ToastProvider } from "../ToastContext/ToastContext";
 
 function ToastPlayground() {
-  return (
-    <div className={styles.wrapper}>
-      <header>
-        <img alt="Cute toast mascot" src="/toast.png" />
-        <h1>Toast Playground</h1>
-      </header>
+	const messageRef = React.useRef(null);
+	const variantRef = React.useRef(null);
+	const [isToast, toggleIsToast] = useToggle(false);
+	const { setToastContent } = React.useContext(ToastProvider);
 
-      <div className={styles.controlsWrapper}>
-        <div className={styles.row}>
-          <label
-            htmlFor="message"
-            className={styles.label}
-            style={{ alignSelf: 'baseline' }}
-          >
-            Message
-          </label>
-          <div className={styles.inputWrapper}>
-            <textarea id="message" className={styles.messageInput} />
-          </div>
-        </div>
+	React.useEffect(() => {
+		if (messageRef.current.value !== "" && variantRef.current !== "") {
+			const newToast = {
+				message: messageRef.current.value,
+				variant: variantRef.current,
+			};
+			setToastContent((prev) => {
+				const newToastContent = new Map(prev);
+				newToastContent.set(newToast.message, newToast);
+				return newToastContent;
+			});
+		}
+		messageRef.current.value = "";
+	}, [isToast, setToastContent]);
 
-        <div className={styles.row}>
-          <div className={styles.label}>Variant</div>
-          <div
-            className={`${styles.inputWrapper} ${styles.radioWrapper}`}
-          >
-            <label htmlFor="variant-notice">
-              <input
-                id="variant-notice"
-                type="radio"
-                name="variant"
-                value="notice"
-              />
-              notice
-            </label>
+	React.useEffect(() => {
+		console.log("Playground is rendered");
+	}, []);
 
-            {/* TODO Other Variant radio buttons here */}
-          </div>
-        </div>
+	return (
+		<div className={styles.wrapper}>
+			<header>
+				<img alt="Cute toast mascot" src="/toast.png" />
+				<h1>Toast Playground</h1>
+			</header>
 
-        <div className={styles.row}>
-          <div className={styles.label} />
-          <div
-            className={`${styles.inputWrapper} ${styles.radioWrapper}`}
-          >
-            <Button>Pop Toast!</Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+			<div className={styles.controlsWrapper}>
+				<div className={styles.row}>
+					<Message ref={messageRef} styles={styles} />
+				</div>
+				<div className={styles.row}>
+					<Variant ref={variantRef} styles={styles} />
+				</div>
+				<div className={styles.row}>
+					<PopToast styles={styles} toggleIsToast={toggleIsToast} />
+				</div>
+			</div>
+		</div>
+	);
 }
 
 export default ToastPlayground;
