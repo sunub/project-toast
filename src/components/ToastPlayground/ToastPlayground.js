@@ -4,33 +4,28 @@ import styles from "./ToastPlayground.module.css";
 import Message from "../Message";
 import Variant from "../Variant";
 import PopToast from "../PopToast";
-import useToggle from "../hooks/use-toggle";
-import { ToastProvider } from "../ToastContext/ToastContext";
+import { MessagetProvider } from "../context/MessageContext";
+import { VariantProvider } from "../context/VariantContext";
+import ToastShelf from "../ToastShelf/ToastShelf";
 
 function ToastPlayground() {
-	const messageRef = React.useRef(null);
-	const variantRef = React.useRef(null);
-	const [isToast, toggleIsToast] = useToggle(false);
-	const { setToastContent } = React.useContext(ToastProvider);
+	const [toasts, setToasts] = React.useState(new Map());
+	const { message } = React.useContext(MessagetProvider);
+	const { variant } = React.useContext(VariantProvider);
 
-	React.useEffect(() => {
-		if (messageRef.current.value !== "" && variantRef.current !== "") {
-			const newToast = {
-				message: messageRef.current.value,
-				variant: variantRef.current,
-			};
-			setToastContent((prev) => {
-				const newToastContent = new Map(prev);
-				newToastContent.set(newToast.message, newToast);
-				return newToastContent;
-			});
-		}
-		messageRef.current.value = "";
-	}, [isToast, setToastContent]);
+	function handleSubmit(e) {
+		e.preventDefault();
 
-	React.useEffect(() => {
-		console.log("Playground is rendered");
-	}, []);
+		const newToast = {
+			message: message,
+			variant: variant,
+		};
+		setToasts((prev) => {
+			const newToasts = new Map(prev);
+			newToasts.set(crypto.randomUUID(), newToast);
+			return newToasts;
+		});
+	}
 
 	return (
 		<div className={styles.wrapper}>
@@ -39,17 +34,22 @@ function ToastPlayground() {
 				<h1>Toast Playground</h1>
 			</header>
 
-			<div className={styles.controlsWrapper}>
+			<ToastShelf toasts={toasts} setToasts={setToasts} />
+
+			<form
+				onSubmit={(e) => handleSubmit(e)}
+				className={styles.controlsWrapper}
+			>
 				<div className={styles.row}>
-					<Message ref={messageRef} styles={styles} />
+					<Message styles={styles} />
 				</div>
 				<div className={styles.row}>
-					<Variant ref={variantRef} styles={styles} />
+					<Variant styles={styles} />
 				</div>
 				<div className={styles.row}>
-					<PopToast styles={styles} toggleIsToast={toggleIsToast} />
+					<PopToast styles={styles} />
 				</div>
-			</div>
+			</form>
 		</div>
 	);
 }

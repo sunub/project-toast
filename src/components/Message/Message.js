@@ -1,9 +1,16 @@
 import React from "react";
+import { MessagetProvider } from "../context/MessageContext";
 
-function Message({ styles }, ref) {
+function Message({ styles }) {
+	const [currMessage, currSetMessage] = React.useState("");
+	const { message, setMessage } = React.useContext(MessagetProvider);
+
 	React.useEffect(() => {
-		console.log("Message is rendered");
-	}, []);
+		setMessage((newMessage) => {
+			newMessage = currMessage;
+			return newMessage;
+		});
+	}, [currMessage, setMessage]);
 
 	return (
 		<>
@@ -16,13 +23,14 @@ function Message({ styles }, ref) {
 			</label>
 			<div className={styles.inputWrapper}>
 				<textarea
-					ref={ref}
 					id="message"
+					value={currMessage}
 					className={styles.messageInput}
+					onChange={(e) => currSetMessage(e.target.value)}
 				/>
 			</div>
 		</>
 	);
 }
 
-export default React.forwardRef(Message);
+export default React.memo(Message);

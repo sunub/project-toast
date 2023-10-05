@@ -1,18 +1,11 @@
 import React from "react";
 import VariantInput from "./VariantInput";
+import { VariantProvider } from "../context/VariantContext";
 
 const VARIANT_OPTIONS = ["notice", "warning", "success", "error"];
 
-function Variant({ styles }, ref) {
-	const [variant, setVariant] = React.useState("");
-
-	React.useEffect(() => {
-		console.log("Variant is rendered");
-	}, []);
-
-	React.useEffect(() => {
-		ref.current = variant;
-	}, [variant, ref]);
+function Variant({ styles }) {
+	const { setVariant } = React.useContext(VariantProvider);
 
 	return (
 		<>
@@ -22,7 +15,12 @@ function Variant({ styles }, ref) {
 					<VariantInput
 						key={`variant-${option}`}
 						value={option}
-						onChange={(e) => setVariant(e.target.value)}
+						onChange={(e) =>
+							setVariant((newVaraint) => {
+								newVaraint = e.target.value;
+								return newVaraint;
+							})
+						}
 					/>
 				))}
 			</div>
@@ -30,4 +28,4 @@ function Variant({ styles }, ref) {
 	);
 }
 
-export default React.forwardRef(Variant);
+export default React.memo(Variant);

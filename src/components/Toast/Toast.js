@@ -8,9 +8,8 @@ import {
 } from "react-feather";
 
 import VisuallyHidden from "../VisuallyHidden";
-
 import styles from "./Toast.module.css";
-import { ToastProvider } from "../ToastContext/ToastContext";
+import useEscapeKey from "../hooks/use-esacpe";
 
 const ICONS_BY_VARIANT = {
 	notice: Info,
@@ -19,23 +18,33 @@ const ICONS_BY_VARIANT = {
 	error: AlertOctagon,
 };
 
-function Toast({ variant, message }) {
+function Toast({ id, variant, message, setToasts }) {
 	const IconComponent = ICONS_BY_VARIANT[variant];
-	const { toastContent, setToastContent } = React.useContext(ToastProvider);
 	const className = styles[`${variant}`];
+	const deleteAllToasts = React.useCallback(() => {
+		setToasts((currentValue) => (currentValue = new Map()));
+	}, [setToasts]);
+	useEscapeKey(deleteAllToasts);
 
 	return (
 		<div className={`${styles.toast} ${className}`}>
 			<div className={styles.iconContainer}>
 				<IconComponent size={24} />
 			</div>
-			<p className={styles.content}>{message}</p>
+			<p className={styles.content}>
+				<VisuallyHidden>{`${variant}`}</VisuallyHidden>
+				{message}
+			</p>
 			<button
-				onClick={() => {
-					const prev = new Map(toastContent);
-					prev.delete(message);
-					setToastContent(prev);
-				}}
+				aria-label={`${variant} message`}
+				aria-live="off"
+				onClick={() =>
+					setToasts((prev) => {
+						const newToasts = new Map(prev);
+						newToasts.delete(id);
+						return newToasts;
+					})
+				}
 				className={styles.closeButton}
 			>
 				<X size={24} />

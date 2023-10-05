@@ -3,15 +3,17 @@ import React from "react";
 import ToastPlayground from "../ToastPlayground";
 import Footer from "../Footer";
 import ToastShelf from "../ToastShelf";
-import { ToastContext } from "../ToastContext/ToastContext";
+import { MessageContext } from "../context/MessageContext";
+import { VariantContext } from "../context/VariantContext";
 
 function App() {
 	return (
 		<>
-			<ToastContext>
-				<ToastPlayground />
-				<ToastShelf />
-			</ToastContext>
+			<MessageContext>
+				<VariantContext>
+					<ToastPlayground />
+				</VariantContext>
+			</MessageContext>
 			<Footer />
 		</>
 	);

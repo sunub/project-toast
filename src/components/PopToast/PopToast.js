@@ -1,12 +1,12 @@
 import React from "react";
 import Button from "../Button";
 
-function PopToast({ styles, toggleIsToast }) {
+function PopToast({ styles }) {
 	return (
 		<>
 			<div className={styles.label} />
 			<div className={`${styles.inputWrapper} ${styles.radioWrapper}`}>
-				<Button onClick={toggleIsToast}>Pop Toast!</Button>
+				<Button>Pop Toast!</Button>
 			</div>
 		</>
 	);
