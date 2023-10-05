@@ -18,13 +18,10 @@ const ICONS_BY_VARIANT = {
 	error: AlertOctagon,
 };
 
-function Toast({ id, variant, message, setToasts }) {
+function Toast({ id, variant, message, dismissToast }) {
 	const IconComponent = ICONS_BY_VARIANT[variant];
 	const className = styles[`${variant}`];
-	const deleteAllToasts = React.useCallback(() => {
-		setToasts((currentValue) => (currentValue = new Map()));
-	}, [setToasts]);
-	useEscapeKey(deleteAllToasts);
+	useEscapeKey(() => dismissToast("all"));
 
 	return (
 		<div className={`${styles.toast} ${className}`}>
@@ -38,13 +35,7 @@ function Toast({ id, variant, message, setToasts }) {
 			<button
 				aria-label={`${variant} message`}
 				aria-live="off"
-				onClick={() =>
-					setToasts((prev) => {
-						const newToasts = new Map(prev);
-						newToasts.delete(id);
-						return newToasts;
-					})
-				}
+				onClick={() => dismissToast(id)}
 				className={styles.closeButton}
 			>
 				<X size={24} />

@@ -4,29 +4,11 @@ import styles from "./ToastPlayground.module.css";
 import Message from "../Message";
 import Variant from "../Variant";
 import PopToast from "../PopToast";
-import { MessagetProvider } from "../context/MessageContext";
-import { VariantProvider } from "../context/VariantContext";
 import ToastShelf from "../ToastShelf/ToastShelf";
+import Control from "../Control";
+import { ToastContext } from "../context/ToastContext";
 
 function ToastPlayground() {
-	const [toasts, setToasts] = React.useState(new Map());
-	const { message } = React.useContext(MessagetProvider);
-	const { variant } = React.useContext(VariantProvider);
-
-	function handleSubmit(e) {
-		e.preventDefault();
-
-		const newToast = {
-			message: message,
-			variant: variant,
-		};
-		setToasts((prev) => {
-			const newToasts = new Map(prev);
-			newToasts.set(crypto.randomUUID(), newToast);
-			return newToasts;
-		});
-	}
-
 	return (
 		<div className={styles.wrapper}>
 			<header>
@@ -34,22 +16,15 @@ function ToastPlayground() {
 				<h1>Toast Playground</h1>
 			</header>
 
-			<ToastShelf toasts={toasts} setToasts={setToasts} />
+			<ToastContext>
+				<ToastShelf />
 
-			<form
-				onSubmit={(e) => handleSubmit(e)}
-				className={styles.controlsWrapper}
-			>
-				<div className={styles.row}>
+				<Control>
 					<Message styles={styles} />
-				</div>
-				<div className={styles.row}>
 					<Variant styles={styles} />
-				</div>
-				<div className={styles.row}>
 					<PopToast styles={styles} />
-				</div>
-			</form>
+				</Control>
+			</ToastContext>
 		</div>
 	);
 }

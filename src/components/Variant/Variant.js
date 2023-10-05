@@ -1,30 +1,22 @@
 import React from "react";
 import VariantInput from "./VariantInput";
-import { VariantProvider } from "../context/VariantContext";
 
 const VARIANT_OPTIONS = ["notice", "warning", "success", "error"];
 
-function Variant({ styles }) {
-	const { setVariant } = React.useContext(VariantProvider);
-
+function Variant({ styles, setVariant }) {
 	return (
-		<>
+		<div className={styles.row}>
 			<div className={styles.label}>Variant</div>
 			<div className={`${styles.inputWrapper} ${styles.radioWrapper}`}>
 				{VARIANT_OPTIONS.map((option) => (
 					<VariantInput
 						key={`variant-${option}`}
 						value={option}
-						onChange={(e) =>
-							setVariant((newVaraint) => {
-								newVaraint = e.target.value;
-								return newVaraint;
-							})
-						}
+						onChange={(e) => setVariant(e.target.value)}
 					/>
 				))}
 			</div>
-		</>
+		</div>
 	);
 }
 

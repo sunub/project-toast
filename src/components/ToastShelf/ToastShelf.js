@@ -2,9 +2,11 @@ import React from "react";
 
 import Toast from "../Toast";
 import styles from "./ToastShelf.module.css";
-import useEscapeKey from "../hooks/use-esacpe";
+import { ToastProvider } from "../context/ToastContext";
 
-function ToastShelf({ toasts, setToasts }) {
+function ToastShelf() {
+	const { toasts, dismissToast } = React.useContext(ToastProvider);
+	console.log(toasts);
 	return (
 		<ol
 			role="region"
@@ -12,21 +14,17 @@ function ToastShelf({ toasts, setToasts }) {
 			aria-live="polite"
 			className={styles.wrapper}
 		>
-			{toasts.size > 0 &&
-				[...toasts.entries()].map((value, i) => {
-					const key = value[0];
-					const content = value[1];
-					return (
-						<li key={`${i}${key}`} className={styles.toastWrapper}>
-							<Toast
-								id={key}
-								message={content.message}
-								variant={content.variant}
-								setToasts={setToasts}
-							/>
-						</li>
-					);
-				})}
+			{toasts.length > 0 &&
+				toasts.map(({ id, message, variant }) => (
+					<li key={id} className={styles.toastWrapper}>
+						<Toast
+							id={id}
+							variant={variant}
+							message={message}
+							dismissToast={dismissToast}
+						/>
+					</li>
+				))}
 		</ol>
 	);
 }
